@@ -2,8 +2,10 @@ package com.campushub.controllers;
 
 
 import com.campushub.dto.HubUserDto;
+import com.campushub.exceptions.HubUserNotFoundException;
 import com.campushub.model.HubUser;
 import com.campushub.service.HubUserService;
+import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,15 +26,13 @@ public class HubUserController {
     }
 
     @GetMapping("user")
-    public ResponseEntity<List<HubUser>> getUsers() {
-        List<HubUser> users = new ArrayList<HubUser>();
-        users.add(new HubUser(1, "testget", "test", 12, "testpassword"));
-        return ResponseEntity.ok(users);
+    public ResponseEntity<List<HubUserDto>> getUsers() {
+        return new ResponseEntity<>(userService.getAllHubUser(), HttpStatus.OK);
     }
 
     @GetMapping("user/{id}")
-    public HubUser userDetail(@PathVariable int id){
-        return new HubUser(id, "return", "return", 10, "password");
+    public ResponseEntity<HubUserDto> userDetail(@PathVariable int id){
+        return ResponseEntity.ok(userService.getUserById(id));
     }
 
     @PostMapping("user/create")
@@ -42,17 +42,16 @@ public class HubUserController {
     }
 
     @PutMapping("user/{id}/update")
-    public ResponseEntity<HubUser> updateUser(@RequestBody HubUser user,
+    public ResponseEntity<HubUserDto> updateUser(@RequestBody HubUserDto userDto,
                                               @PathVariable("id") int userId){
 
-        System.out.println(user.getName());
-        return new ResponseEntity<>(user, HttpStatus.OK);
-
+        HubUserDto res = userService.updateUser(userDto, userId);
+        return new ResponseEntity<>(res, HttpStatus.OK);
     }
 
     @DeleteMapping("user/{id}/delete")
     public ResponseEntity<String> deleteUser(@PathVariable("id") int userId){
-        System.out.println(userId);
-        return ResponseEntity.ok("User deleted successfully");
+        userService.deleteUserId(userId);
+        return new ResponseEntity<>("User delete", HttpStatus.OK);
     }
 }

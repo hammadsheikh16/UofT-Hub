@@ -10,5 +10,5 @@ public interface HubUserRepository
 
     boolean existsUserByEmail(String email);
     boolean existsUserById(Integer id);
-    Optional<HubUser> findCustomerByEMail(String email);
+    Optional<HubUser> findCustomerByEmail(String email);
 }
